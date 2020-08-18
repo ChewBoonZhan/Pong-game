@@ -9,12 +9,13 @@ var score = 0;
 var cs_score = 0;
 var width = window.innerWidth;
 var height = window.innerHeight-4.7;
-
+var recty;
 var x = width/2;
 var y = height/2;
 var dx = 1;
 var dy = 1;
 var lr= 2;
+var cheat = false;
 var ai_y = height/2-50;
 var reversed = Math.random();
 if (reversed >=0.5){
@@ -31,14 +32,14 @@ function update_dx(dx){
     else{
         dx+=0.5;
     }
-    lr+=0.2;
+    lr+=0.17;
     return dx;
 }
 function play(){
     circle(x,y,radius);
     x+=dx;
     y+=dy;
-    if ((y + radius>=height) || (y - radius<=0)){
+    if ((y + (radius/2)>=height) || (y - (radius/2)<=0)){
         dy = -dy;
         dx = update_dx(dx);
         dy = update_dx(dy);
@@ -55,20 +56,34 @@ function play(){
 
     
 
-    
+    //var rectY = 
 
 
     //create the rect that follows mouse
-    if((mouseY-75<=0)) {
-        rect(0,0,20,150);
-        
-    }
-    else if((mouseY+75>=height)){
-        rect(0,height-150,20,150);
-        
+    if (!cheat){
+        if((mouseY-75<=0)) {
+            rect(0,0,20,150);
+            recty = 75;
+            
+        }
+        else if((mouseY+75>=height)){
+            rect(0,height-150,20,150);
+            recty = height-75;
+        }
+        else{
+            rect(0,mouseY-75,20,150);
+            recty= mouseY;
+        }
     }
     else{
-        rect(0,mouseY-75,20,150);
+        if (ai_y > y){
+            ai_y -= lr;
+        }
+        else{
+            ai_y += lr;
+        }
+        recty = ai_y;
+        rect(0,ai_y-75,20,150); 
     }
 
     //create the ai that plays with you.
@@ -98,6 +113,7 @@ function reset(){
 }
 
 
+
 function draw(){
     background(0);
     
@@ -106,7 +122,7 @@ function draw(){
     
     //code such that if it hits the left side first 
     if ((x - radius <=0)){
-        if (((y <= mouseY+78) && (y >= mouseY - 78))){
+        if (((y <= recty+100) && (y >= recty - 100))){
             dx = -dx;
             dx = update_dx(dx);
             dy = update_dx(dy);
